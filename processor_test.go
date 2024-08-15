@@ -137,7 +137,7 @@ func TestGenerateCondition(t *testing.T) {
 	}
 }
 
-func TestCondition_Validate(t *testing.T) {
+func TestCondition_ValidateStruct(t *testing.T) {
 	type args struct {
 		query  string
 		object interface{}
@@ -279,20 +279,20 @@ func TestCondition_Validate(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			condition, _ := GenerateCondition(tt.args.query)
-			gotIsValid, err := Validate(condition, tt.args.object)
+			proc := NewProcessor().RegisterCondition(tt.args.query)
+			gotIsValid, err := proc.ValidateStruct(tt.args.object)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Condition.Validate() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Condition.ValidateStruct() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if gotIsValid != tt.wantIsValid {
-				t.Errorf("Condition.Validate() = %v, want %v", gotIsValid, tt.wantIsValid)
+				t.Errorf("Condition.ValidateStruct() = %v, want %v", gotIsValid, tt.wantIsValid)
 			}
 		})
 	}
 }
 
-func TestCondition_ValidateObjects(t *testing.T) {
+func TestCondition_ValidateMultipleStructs(t *testing.T) {
 	type fields struct {
 		Operator   string
 		Attribute  *structs2.Attribute
@@ -456,14 +456,14 @@ func TestCondition_ValidateObjects(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			condition, _ := GenerateCondition(tt.args.query)
-			gotIsValid, err := ValidateObjects(condition, tt.args.data)
+			proc := NewProcessor().RegisterCondition(tt.args.query)
+			gotIsValid, err := proc.ValidateMultipleStructs(tt.args.data)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Condition.ValidateObjects() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Condition.ValidateMultipleStructs() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if gotIsValid != tt.wantIsValid {
-				t.Errorf("Condition.ValidateObjects() = %v, want %v", gotIsValid, tt.wantIsValid)
+				t.Errorf("Condition.ValidateMultipleStructs() = %v, want %v", gotIsValid, tt.wantIsValid)
 			}
 		})
 	}
@@ -669,17 +669,14 @@ func TestCondition_ValidateCondition(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			referenceCondition, err := GenerateCondition(tt.referenceQuery)
-			if err != nil {
-				t.Errorf("Condition.ValidateCondition() referenceQuery error = %v", err)
-				return
-			}
+			proc := NewProcessor().RegisterCondition(tt.referenceQuery)
+
 			inputCondition, err := GenerateCondition(tt.input)
 			if err != nil {
 				t.Errorf("Condition.ValidateCondition() input error = %v", err)
 				return
 			}
-			gotIsValid, err := ValidateCondition(referenceCondition, inputCondition)
+			gotIsValid, err := proc.ValidateCondition(inputCondition)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Condition.ValidateCondition() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -956,8 +953,8 @@ func TestCondition_FilterSlice(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			condition, _ := GenerateCondition(tt.args.query)
-			gotResults, err := FilterSlice(condition, tt.args.objects)
+			proc := NewProcessor().RegisterCondition(tt.args.query)
+			gotResults, err := proc.FilterSlice(tt.args.objects)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Condition.FilterSlice() error = %v, wantErr %v", err, tt.wantErr)
 				return

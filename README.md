@@ -14,7 +14,7 @@ with ease.
 ## Installation
 
 ```bash
-go get github.com/ahmadrezamusthafa/deep-validator
+go get github.com/ahmadrezamusthafa/deep-validators
 ```
 
 ## Usage
@@ -45,8 +45,9 @@ func main() {
 		Division: "engineering",
 	}
 
-	condition, _ := deepvalidator.GenerateCondition(query)
-	isValid, err := deepvalidator.ValidateObjects(condition, data)
+	isValid, err := deepvalidator.NewProcessor().
+		RegisterCondition(query).
+		ValidateStruct(data)
 
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -84,7 +85,7 @@ type ThirdStruct struct {
 }
 
 func main() {
-	query := `(firstStruct.id=123 || secondStruct.name=Test || thirdStruct.segment=new-member) && (firstStruct.member_id=345 && secondStruct.name=Test) && thirdStruct.type=ABC`
+	query := `(FirstStruct.id=123 || SecondStruct.name=Test || ThirdStruct.segment=new-member) && (FirstStruct.member_id=345 && SecondStruct.name=Test) && ThirdStruct.type=ABC`
 	data := []interface{}{
 		FirstStruct{
 			ID:       "123",
@@ -100,8 +101,9 @@ func main() {
 		},
 	}
 
-	condition, _ := deepvalidator.GenerateCondition(query)
-	isValid, err := deepvalidator.ValidateObjects(condition, data)
+	isValid, err := deepvalidator.NewProcessor().
+		RegisterCondition(query).
+		ValidateMultipleStructs(data)
 
 	if err != nil {
 		fmt.Println("Error:", err)

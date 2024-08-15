@@ -19,11 +19,11 @@ import (
 func BenchmarkGenerateCondition(b *testing.B) {
 	query := `id=1 && ( division = engineering || division = finance )`
 	for n := 0; n < b.N; n++ {
-		GenerateCondition(query)
+		_, _ = GenerateCondition(query)
 	}
 }
 
-// BENCHMARK Validate
+// BENCHMARK ValidateStruct
 // Improvement history:
 // ------------------------------------
 //
@@ -46,13 +46,13 @@ func BenchmarkValidate(b *testing.B) {
 	}
 
 	query := "(id=1 && (member_id=12||member_id=2))  &&   (division=engineering || division=finance)"
-	condition, _ := GenerateCondition(query)
+	proc := NewProcessor().RegisterCondition(query)
 	for n := 0; n < b.N; n++ {
-		Validate(condition, object)
+		_, _ = proc.ValidateStruct(object)
 	}
 }
 
-// BENCHMARK ValidateObjects
+// BENCHMARK ValidateMultipleStructs
 // Improvement history:
 // ------------------------------------
 //
@@ -75,9 +75,9 @@ func BenchmarkValidateObjects(b *testing.B) {
 	}
 
 	query := "(id=1 && (member_id=12||member_id=2))  &&   (division=engineering || division=finance)"
-	condition, _ := GenerateCondition(query)
+	proc := NewProcessor().RegisterCondition(query)
 	for n := 0; n < b.N; n++ {
-		ValidateObjects(condition, object)
+		_, _ = proc.ValidateMultipleStructs(object)
 	}
 }
 
@@ -95,10 +95,9 @@ func BenchmarkValidateObjects(b *testing.B) {
 func BenchmarkValidateCondition(b *testing.B) {
 	referenceQuery := `id=1 && ( division = engineering || division = finance )`
 	input := `id=1 && division = engineering`
-	referenceCondition, _ := GenerateCondition(referenceQuery)
 	inputCondition, _ := GenerateCondition(input)
-
+	proc := NewProcessor().RegisterCondition(referenceQuery)
 	for n := 0; n < b.N; n++ {
-		ValidateCondition(referenceCondition, inputCondition)
+		_, _ = proc.ValidateCondition(inputCondition)
 	}
 }

@@ -1,23 +1,47 @@
 package deepvalidator
 
 import (
+	"errors"
 	structgen "github.com/ahmadrezamusthafa/deep-validator/struct-gen"
 	"github.com/ahmadrezamusthafa/deep-validator/structs"
-	"github.com/ahmadrezamusthafa/deep-validator/validator"
+	"github.com/ahmadrezamusthafa/deep-validator/validators"
 )
 
-type Processor struct{}
+type Processor interface {
+	RegisterCondition(astQuery string) Validator
+}
 
-func NewProcessor() *Processor {
-	return &Processor{}
+type Validator interface {
+	ValidateStruct(data interface{}) (isValid bool, err error)
+	ValidateMultipleStructs(data ...interface{}) (isValid bool, err error)
+	ValidateCondition(inputCondition structs.Condition) (isValid bool, err error)
+	FilterSlice(data interface{}) (result interface{}, err error)
+}
+
+type processor struct {
+	condition *structs.Condition
+}
+
+type validator struct {
+	processor *processor
+}
+
+func NewProcessor() Processor {
+	return &processor{}
+}
+
+func newValidator(processor *processor) Validator {
+	return &validator{
+		processor: processor,
+	}
 }
 
 /*
 GenerateCondition
 -----------------------------------------------------------------------
-is a function to generate condition object as validator that used by
-  - Validate
-  - ValidateObjects
+is a function to generate condition object as validators that used by
+  - ValidateStruct
+  - ValidateMultipleStructs
   - ValidateCondition
 
 Param:
@@ -28,22 +52,44 @@ func GenerateCondition(astQuery string) (structs.Condition, error) {
 	return gen.GenerateCondition(astQuery)
 }
 
-func Validate(referenceCondition structs.Condition, data interface{}) (isValid bool, err error) {
-	con := validator.Condition{Condition: &referenceCondition}
+func (p *processor) RegisterCondition(astQuery string) Validator {
+	var gen structgen.StructGen
+	condition, err := gen.GenerateCondition(astQuery)
+	if err != nil {
+		return newValidator(p)
+	}
+	p.condition = &condition
+	return newValidator(p)
+}
+
+func (v *validator) ValidateStruct(data interface{}) (isValid bool, err error) {
+	if v.processor.condition == nil {
+		return false, errors.New("condition is nil")
+	}
+	con := validators.Condition{Condition: v.processor.condition}
 	return con.Validate(data)
 }
 
-func ValidateObjects(referenceCondition structs.Condition, data ...interface{}) (isValid bool, err error) {
-	con := validator.Condition{Condition: &referenceCondition}
+func (v *validator) ValidateMultipleStructs(data ...interface{}) (isValid bool, err error) {
+	if v.processor.condition == nil {
+		return false, errors.New("condition is nil")
+	}
+	con := validators.Condition{Condition: v.processor.condition}
 	return con.ValidateObjects(data...)
 }
 
-func ValidateCondition(referenceCondition structs.Condition, inputCondition structs.Condition) (isValid bool, err error) {
-	con := validator.Condition{Condition: &referenceCondition}
+func (v *validator) ValidateCondition(inputCondition structs.Condition) (isValid bool, err error) {
+	if v.processor.condition == nil {
+		return false, errors.New("condition is nil")
+	}
+	con := validators.Condition{Condition: v.processor.condition}
 	return con.ValidateCondition(inputCondition)
 }
 
-func FilterSlice(referenceCondition structs.Condition, data interface{}) (result interface{}, err error) {
-	con := validator.Condition{Condition: &referenceCondition}
+func (v *validator) FilterSlice(data interface{}) (result interface{}, err error) {
+	if v.processor.condition == nil {
+		return false, errors.New("condition is nil")
+	}
+	con := validators.Condition{Condition: v.processor.condition}
 	return con.FilterSlice(data)
 }

@@ -1,4 +1,4 @@
-package validator
+package validators
 
 import (
 	"github.com/ahmadrezamusthafa/deep-validator/common/utils"

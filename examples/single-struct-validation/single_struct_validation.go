@@ -19,8 +19,9 @@ func main() {
 		Division: "engineering",
 	}
 
-	condition, _ := deepvalidator.GenerateCondition(query)
-	isValid, err := deepvalidator.ValidateObjects(condition, data)
+	isValid, err := deepvalidator.NewProcessor().
+		RegisterCondition(query).
+		ValidateStruct(data)
 
 	if err != nil {
 		fmt.Println("Error:", err)
