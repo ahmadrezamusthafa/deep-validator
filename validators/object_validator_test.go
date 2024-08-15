@@ -23,7 +23,7 @@ func TestProcessStructsToMap(t *testing.T) {
 		EventSource string
 		Payload     TransactionUpdatedEventPayload
 	}
-	
+
 	tests := []struct {
 		name     string
 		input    interface{}
