@@ -12,8 +12,9 @@ import (
 //
 // ------------------------------------
 //
-//	301020	      3341 ns/op
-//	372768	      2793 ns/op (now)
+//		301020	      3341 ns/op
+//		372768	      2793 ns/op
+//	    652832	      1793 ns/op (now)
 //
 // ------------------------------------
 func BenchmarkGenerateCondition(b *testing.B) {
@@ -31,7 +32,8 @@ func BenchmarkGenerateCondition(b *testing.B) {
 //
 // ------------------------------------
 //
-//	484363	      2316 ns/op (now)
+//		484363	      2316 ns/op
+//	    695434	      1604 ns/op (now)
 //
 // ------------------------------------
 func BenchmarkValidate(b *testing.B) {
@@ -60,7 +62,8 @@ func BenchmarkValidate(b *testing.B) {
 //
 // ------------------------------------
 //
-//	359617	      2829 ns/op (now)
+//		359617	      2829 ns/op
+//	    963174	      1236 ns/op (now)
 //
 // ------------------------------------
 func BenchmarkValidateObjects(b *testing.B) {
@@ -89,7 +92,8 @@ func BenchmarkValidateObjects(b *testing.B) {
 //
 // ------------------------------------
 //
-//	1869136	       625 ns/op (now)
+//		1869136	       625 ns/op
+//	    3837999	       287.4 ns/op (now)
 //
 // ------------------------------------
 func BenchmarkValidateCondition(b *testing.B) {
