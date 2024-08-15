@@ -330,7 +330,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation",
 			args: args{
-				query: `member_id=345`,
+				query: `firstStruct.member_id=345`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -345,7 +345,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - attribute brand not exist",
 			args: args{
-				query: `member_id=345 && brand=adidas`,
+				query: `firstStruct.member_id=345 && firstStruct.brand=adidas`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -406,7 +406,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `id=123`,
+				query: `firstStruct.id=123`,
 				data: firstStruct{
 					ID:       "123",
 					MemberID: "345",
