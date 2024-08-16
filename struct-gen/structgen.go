@@ -16,11 +16,13 @@ type StructGen struct {
 
 var (
 	operatorMap = map[string]interface{}{
-		operators.OperatorEqual:            nil,
-		operators.OperatorLessThan:         nil,
-		operators.OperatorGreaterThan:      nil,
-		operators.OperatorLessThanEqual:    nil,
-		operators.OperatorGreaterThanEqual: nil,
+		operators.OperatorEqual:              nil,
+		operators.OperatorLessThan:           nil,
+		operators.OperatorGreaterThan:        nil,
+		operators.OperatorLessThanEqual:      nil,
+		operators.OperatorGreaterThanEqual:   nil,
+		operators.OperatorContains:           nil,
+		operators.OperatorContainsRegexMatch: nil,
 	}
 
 	logicalOperatorMap = map[string]string{
@@ -128,11 +130,15 @@ func getTokenAttributes(query string) []*structs.TokenAttribute {
 			} else {
 				buffer.WriteRune(char)
 			}
-		case '=', '(', ')':
+		case '=', '(', ')', '~':
 			if buffer.Len() > 0 {
 				bufBytes := buffer.Bytes()
 				switch bufBytes[0] {
 				case bytescodes.ByteLessThan, bytescodes.ByteGreaterThan:
+					tokenAttributes = appendAttribute(tokenAttributes, buffer, string(bufBytes)+string(char), isAlphanumeric)
+					isAlphanumeric = false
+					continue
+				case bytescodes.ByteVerticalBar:
 					tokenAttributes = appendAttribute(tokenAttributes, buffer, string(bufBytes)+string(char), isAlphanumeric)
 					isAlphanumeric = false
 					continue

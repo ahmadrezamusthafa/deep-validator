@@ -386,6 +386,98 @@ func Test_getToken(t *testing.T) {
 			},
 		},
 		{
+			name: "Normal case",
+			args: args{
+				value: `date>"2019-09-01 00:10:00" && date<=2019-10-10 && (segment_id="12"||segment_id=13) && (remark |= "ahmad reza musthafa" || remark |~ [0-9]+)`,
+			},
+			want: []*structs.TokenAttribute{
+				{
+					Value: "date",
+				},
+				{
+					Value: ">",
+				},
+				{
+					Value:          "2019-09-01 00:10:00",
+					IsAlphanumeric: true,
+				},
+				{
+					Value: "&&",
+				},
+				{
+					Value: "date",
+				},
+				{
+					Value: "<=",
+				},
+				{
+					Value: "2019-10-10",
+				},
+				{
+					Value: "&&",
+				},
+				{
+					Value: "(",
+				},
+				{
+					Value: "segment_id",
+				},
+				{
+					Value: "=",
+				},
+				{
+					Value:          "12",
+					IsAlphanumeric: true,
+				},
+				{
+					Value: "||",
+				},
+				{
+					Value: "segment_id",
+				},
+				{
+					Value: "=",
+				},
+				{
+					Value: "13",
+				},
+				{
+					Value: ")",
+				},
+				{
+					Value: "&&",
+				},
+				{
+					Value: "(",
+				},
+				{
+					Value: "remark",
+				},
+				{
+					Value: "|=",
+				},
+				{
+					Value:          "ahmad reza musthafa",
+					IsAlphanumeric: true,
+				},
+				{
+					Value: "||",
+				},
+				{
+					Value: "remark",
+				},
+				{
+					Value: "|~",
+				},
+				{
+					Value: "[0-9]+",
+				},
+				{
+					Value: ")",
+				},
+			},
+		},
+		{
 			name: "Nil case",
 			args: args{
 				value: ` `,
