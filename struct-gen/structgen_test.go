@@ -39,6 +39,21 @@ func TestGenerateConditionQueryStructure(t *testing.T) {
 			args: args{
 				query: `
                       (id = 1 
+                      && member_id != 2 )
+                      || (
+                        division != engineering 
+                        || division = finance
+                      )
+`,
+			},
+			want:    `{"conditions":[{"conditions":[{"attribute":{"name":"id","operator":"=","value":"1","type":"numeric"}},{"operator":"AND","attribute":{"name":"member_id","operator":"!=","value":"2","type":"numeric"}}]},{"operator":"OR","conditions":[{"attribute":{"name":"division","operator":"!=","value":"engineering","type":"alphanumeric"}},{"operator":"OR","attribute":{"name":"division","operator":"=","value":"finance","type":"alphanumeric"}}]}]}`,
+			wantErr: false,
+		},
+		{
+			name: "Normal case",
+			args: args{
+				query: `
+                      (id = 1 
                       && member_id = 2 )
                       || (
                         division = engineering 
@@ -507,6 +522,35 @@ func Test_getToken(t *testing.T) {
 				},
 				{
 					Value: ")",
+				},
+			},
+		},
+		{
+			name: "Normal case",
+			args: args{
+				value: "id=1 &&  member_id!=2",
+			},
+			want: []*structs.TokenAttribute{
+				{
+					Value: "id",
+				},
+				{
+					Value: "=",
+				},
+				{
+					Value: "1",
+				},
+				{
+					Value: "&&",
+				},
+				{
+					Value: "member_id",
+				},
+				{
+					Value: "!=",
+				},
+				{
+					Value: "2",
 				},
 			},
 		},

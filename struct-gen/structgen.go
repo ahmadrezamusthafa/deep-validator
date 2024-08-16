@@ -17,6 +17,7 @@ type StructGen struct {
 var (
 	operatorMap = map[string]interface{}{
 		operators.OperatorEqual:              nil,
+		operators.OperatorNotEqual:           nil,
 		operators.OperatorLessThan:           nil,
 		operators.OperatorGreaterThan:        nil,
 		operators.OperatorLessThanEqual:      nil,
@@ -112,7 +113,7 @@ func getTokenAttributes(query string) []*structs.TokenAttribute {
 			} else {
 				buffer.WriteRune(char)
 			}
-		case '|', '&', '<', '>':
+		case '|', '&', '<', '>', '!':
 			if buffer.Len() > 0 {
 				bufBytes := buffer.Bytes()
 				switch bufBytes[0] {
@@ -138,7 +139,7 @@ func getTokenAttributes(query string) []*structs.TokenAttribute {
 					tokenAttributes = appendAttribute(tokenAttributes, buffer, string(bufBytes)+string(char), isAlphanumeric)
 					isAlphanumeric = false
 					continue
-				case bytescodes.ByteVerticalBar:
+				case bytescodes.ByteVerticalBar, bytescodes.ByteExclamation:
 					tokenAttributes = appendAttribute(tokenAttributes, buffer, string(bufBytes)+string(char), isAlphanumeric)
 					isAlphanumeric = false
 					continue

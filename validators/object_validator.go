@@ -206,6 +206,8 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 			switch operator {
 			case operators.OperatorEqual:
 				isValid = value == conditionValue
+			case operators.OperatorNotEqual:
+				isValid = value != conditionValue
 			case operators.OperatorContains:
 				isValid = validateAlphanumericContains(value, conditionValue)
 			case operators.OperatorContainsRegexMatch:
@@ -287,6 +289,8 @@ func (c *Condition) validateMap(key string, value interface{}) (isValid bool, er
 		switch operator {
 		case operators.OperatorEqual:
 			isValid = value == conditionValue
+		case operators.OperatorNotEqual:
+			isValid = value != conditionValue
 		case operators.OperatorContains:
 			isValid = validateAlphanumericContains(value, conditionValue)
 		case operators.OperatorContainsRegexMatch:

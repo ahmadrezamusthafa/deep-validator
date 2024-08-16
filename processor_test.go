@@ -343,6 +343,51 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 			wantErr:     false,
 		},
 		{
+			name: "Normal case - one struct validation",
+			args: args{
+				query: `firstStruct.division=engineering`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "engineering",
+					},
+				},
+			},
+			wantIsValid: true,
+			wantErr:     false,
+		},
+		{
+			name: "Normal case - one struct validation - not equal",
+			args: args{
+				query: `firstStruct.member_id!=1232323`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "engineering",
+					},
+				},
+			},
+			wantIsValid: true,
+			wantErr:     false,
+		},
+		{
+			name: "Normal case - one struct validation - not equal",
+			args: args{
+				query: `firstStruct.division!=sales`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "engineering",
+					},
+				},
+			},
+			wantIsValid: true,
+			wantErr:     false,
+		},
+		{
 			name: "Normal case - one struct validation - contains str",
 			args: args{
 				query: `firstStruct.division|=eng`,
