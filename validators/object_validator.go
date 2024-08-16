@@ -152,11 +152,6 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 		field := rValue.Field(i)
 		typeField := rValue.Type().Field(i)
 		tag := typeField.Name
-		jsonTag, ok := typeField.Tag.Lookup("json")
-		if ok && jsonTag != "" {
-			tag = jsonTag
-		}
-		tag = utils.ConvertToSnakeCase(tag)
 		tag = prefix + tag
 
 		if tag == c.Attribute.Name {

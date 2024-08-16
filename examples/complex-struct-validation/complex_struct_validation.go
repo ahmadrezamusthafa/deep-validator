@@ -65,7 +65,7 @@ type TransactionUpdatedEvent struct {
 }
 
 func main() {
-	query := `(PartnerStatementUpdatedEvent.payload.partner_id=bca && PartnerStatementUpdatedEvent.payload.debit=50000 && TransactionUpdatedEvent.payload.total_amount=50000)`
+	query := `(PartnerId=bca && Debit=50000 && TotalAmount=50000)`
 	data := []interface{}{
 		PartnerStatementUpdatedEvent{
 			EventSource:          "",

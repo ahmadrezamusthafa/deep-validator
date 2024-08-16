@@ -21,7 +21,7 @@ type ThirdStruct struct {
 }
 
 func main() {
-	query := `(FirstStruct.id=123 || SecondStruct.name=Test || ThirdStruct.segment=new-member) && (FirstStruct.member_id=345 && SecondStruct.name=Test) && ThirdStruct.type=ABC`
+	query := `(ID=123 || Name=Test || Segment=new-member) && (MemberID=345 && Name=Test) && Type=ABC`
 	data := []interface{}{
 		FirstStruct{
 			ID:       "123",

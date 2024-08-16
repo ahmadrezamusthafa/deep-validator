@@ -12,7 +12,7 @@ type FirstStruct struct {
 }
 
 func main() {
-	query := `id=123`
+	query := `ID=123`
 	data := FirstStruct{
 		ID:       "123",
 		MemberID: "345",

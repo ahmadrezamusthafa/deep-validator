@@ -151,7 +151,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `(id=1 && (member_id=12||member_id=2))  &&   (division=engineering || division=finance)`,
+				query: `(ID=1 && (MemberID=12||MemberID=2))  &&   (Division=engineering || Division=finance)`,
 				object: struct {
 					ID       string `json:"id"`
 					MemberID string `json:"member_id"`
@@ -168,7 +168,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `(id=1 &&  member_id=2  &&   (division=engineering || division=finance))||(member_id=3)`,
+				query: `(ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance))||(MemberID=3)`,
 				object: struct {
 					ID       int    `json:"id"`
 					MemberID int    `json:"member_id"`
@@ -202,7 +202,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `id=1 &&  member_id=3  && ((division=engineering || division=finance || division=people)&&(member_id=2||id=1))`,
+				query: `ID=1 &&  MemberID=3  && ((Division=engineering || Division=finance || Division=people)&&(MemberID=2||ID=1))`,
 				object: struct {
 					ID       int    `json:"id"`
 					MemberID int    `json:"member_id"`
@@ -219,7 +219,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance)`,
+				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance)`,
 				object: struct {
 					ID       int
 					MemberID int
@@ -236,7 +236,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation - Brand attribute is not exist",
 			args: args{
-				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance) && Brand=Adidas`,
+				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance) && Brand=Adidas`,
 				object: struct {
 					ID       int
 					MemberID int
@@ -253,7 +253,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation - skip not exist attribute because using OR condition",
 			args: args{
-				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance) && (category=Bawahan || id=1 || brand=nike)`,
+				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance) && (Category=Bawahan || ID=1 || Brand=nike)`,
 				object: struct {
 					ID       int
 					MemberID int
@@ -889,7 +889,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   "id=1||id=2",
+				query:   "ID=1||ID=2",
 				objects: testData,
 			},
 			wantResults: []Account{
@@ -921,7 +921,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   "(member_id=23)||((id=1 && member_id=21)&&(division=people||division=managerial))",
+				query:   "(MemberID=23)||((ID=1 && MemberID=21)&&(Division=people||Division=managerial))",
 				objects: testData,
 			},
 			wantResults: []Account{
@@ -953,7 +953,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   "member_id=21 && score=90",
+				query:   "MemberID=21 && Score=90",
 				objects: testData,
 			},
 			wantResults: []Account{
@@ -974,7 +974,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   "member_id=25 && point>=3000",
+				query:   "MemberID=25 && Point>=3000",
 				objects: testData,
 			},
 			wantResults: []Account{
@@ -995,7 +995,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   `join_date>"2015-01-01T00:00:00+07:00" && join_date<="2016-01-01T00:00:00+07:00" && score>80 && point<4000 && wallet>90 && money>=1500000`,
+				query:   `JoinDate>"2015-01-01T00:00:00+07:00" && JoinDate<="2016-01-01T00:00:00+07:00" && Score>80 && Point<4000 && Wallet>90 && Money>=1500000`,
 				objects: testData,
 			},
 			wantResults: []Account{
