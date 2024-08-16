@@ -11,8 +11,29 @@ import (
 	"time"
 )
 
+type ConditionValidator interface {
+	ValidateCondition(condition structs.Condition) (isValid bool, err error)
+	Validate(data interface{}) (isValid bool, err error)
+	ValidateObjects(data ...interface{}) (isValid bool, err error)
+	SetRemovePrefix(value bool) *Condition
+	FilterSlice(data interface{}) (result interface{}, err error)
+	GetCondition() *structs.Condition
+}
+
 type Condition struct {
 	*structs.Condition
+	removePrefix bool
+}
+
+func NewConditionValidator(condition *structs.Condition) ConditionValidator {
+	return &Condition{
+		Condition:    condition,
+		removePrefix: false,
+	}
+}
+
+func (c *Condition) GetCondition() *structs.Condition {
+	return c.Condition
 }
 
 func (c *Condition) ValidateCondition(condition structs.Condition) (isValid bool, err error) {
@@ -110,6 +131,11 @@ func (c *Condition) validateConditionValue(prefix string, condition structs.Cond
 		}
 	}
 	return
+}
+
+func (c *Condition) SetRemovePrefix(value bool) *Condition {
+	c.removePrefix = value
+	return c
 }
 
 func setNonExistAttributeDefaultValue(condition *structs.Condition, referenceAttrMap, inputAttrMap map[string]bool) {

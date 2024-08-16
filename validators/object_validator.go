@@ -36,7 +36,7 @@ func (c *Condition) ValidateObjects(data ...interface{}) (isValid bool, err erro
 	rType := reflect.TypeOf(data)
 	switch rType.Kind() {
 	case reflect.Slice:
-		dataMap := structsToMap(data)
+		dataMap := structsToMap(data, c.removePrefix)
 		return c.Validate(dataMap)
 	default:
 		return false, fmt.Errorf(errormessages.ErrorMessageInvalidType, "slice")
@@ -346,11 +346,19 @@ func validateNumeric(firstVal interface{}, operator string, secondVal interface{
 	}
 }
 
-func structsToMap(data interface{}) map[string]interface{} {
-	return processStructsToMap(reflect.TypeOf(data).Name(), data)
+func structsToMap(data interface{}, removePrefix ...bool) map[string]interface{} {
+	rValue := reflect.ValueOf(data)
+	prefix := ""
+	if rValue.Kind() == reflect.Slice {
+		prefix = reflect.TypeOf(data).Name()
+	}
+	if len(removePrefix) > 0 {
+		return processStructsToMap(removePrefix[0], prefix, data)
+	}
+	return processStructsToMap(false, prefix, data)
 }
 
-func processStructsToMap(prefix string, data interface{}) map[string]interface{} {
+func processStructsToMap(removePrefix bool, prefix string, data interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 
 	rValue := reflect.ValueOf(data)
@@ -368,7 +376,7 @@ func processStructsToMap(prefix string, data interface{}) map[string]interface{}
 				return result
 			}
 			itemPrefix := reflect.TypeOf(item).Name()
-			nestedMap := processStructsToMap(itemPrefix, item)
+			nestedMap := processStructsToMap(removePrefix, itemPrefix, item)
 			for k, v := range nestedMap {
 				result[k] = v
 			}
@@ -391,18 +399,18 @@ func processStructsToMap(prefix string, data interface{}) map[string]interface{}
 			key = strings.Split(jsonTag, ",")[0]
 		}
 
-		if prefix != "" {
+		if prefix != "" && !removePrefix {
 			key = prefix + "." + key
 		}
 
 		if field.Kind() == reflect.Struct {
-			nestedMap := processStructsToMap(key, field.Interface())
+			nestedMap := processStructsToMap(removePrefix, key, field.Interface())
 			for k, v := range nestedMap {
 				result[k] = v
 			}
 		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
 			if field.Elem().Kind() == reflect.Struct {
-				nestedMap := processStructsToMap(key, field.Elem().Interface())
+				nestedMap := processStructsToMap(removePrefix, key, field.Elem().Interface())
 				for k, v := range nestedMap {
 					result[k] = v
 				}

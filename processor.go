@@ -12,27 +12,26 @@ type Processor interface {
 }
 
 type Validator interface {
+	SetRemovePrefix(value bool) Validator
 	ValidateStruct(data interface{}) (isValid bool, err error)
 	ValidateMultipleStructs(data ...interface{}) (isValid bool, err error)
 	ValidateCondition(inputCondition structs.Condition) (isValid bool, err error)
 	FilterSlice(data interface{}) (result interface{}, err error)
 }
 
-type processor struct {
-	condition *structs.Condition
-}
+type processor struct{}
 
 type validator struct {
-	processor *processor
+	conditionValidator validators.ConditionValidator
 }
 
 func NewProcessor() Processor {
 	return &processor{}
 }
 
-func newValidator(processor *processor) Validator {
+func newValidator(conditionValidator validators.ConditionValidator) Validator {
 	return &validator{
-		processor: processor,
+		conditionValidator: conditionValidator,
 	}
 }
 
@@ -56,40 +55,43 @@ func (p *processor) RegisterCondition(astQuery string) Validator {
 	var gen structgen.StructGen
 	condition, err := gen.GenerateCondition(astQuery)
 	if err != nil {
-		return newValidator(p)
+		return newValidator(nil)
 	}
-	p.condition = &condition
-	return newValidator(p)
+	return newValidator(validators.NewConditionValidator(&condition))
+}
+
+func (v *validator) SetRemovePrefix(value bool) Validator {
+	if v.conditionValidator.GetCondition() == nil {
+		return v
+	}
+	v.conditionValidator.SetRemovePrefix(value)
+	return v
 }
 
 func (v *validator) ValidateStruct(data interface{}) (isValid bool, err error) {
-	if v.processor.condition == nil {
+	if v.conditionValidator.GetCondition() == nil {
 		return false, errors.New("condition is nil")
 	}
-	con := validators.Condition{Condition: v.processor.condition}
-	return con.Validate(data)
+	return v.conditionValidator.Validate(data)
 }
 
 func (v *validator) ValidateMultipleStructs(data ...interface{}) (isValid bool, err error) {
-	if v.processor.condition == nil {
+	if v.conditionValidator.GetCondition() == nil {
 		return false, errors.New("condition is nil")
 	}
-	con := validators.Condition{Condition: v.processor.condition}
-	return con.ValidateObjects(data...)
+	return v.conditionValidator.ValidateObjects(data...)
 }
 
 func (v *validator) ValidateCondition(inputCondition structs.Condition) (isValid bool, err error) {
-	if v.processor.condition == nil {
+	if v.conditionValidator.GetCondition() == nil {
 		return false, errors.New("condition is nil")
 	}
-	con := validators.Condition{Condition: v.processor.condition}
-	return con.ValidateCondition(inputCondition)
+	return v.conditionValidator.ValidateCondition(inputCondition)
 }
 
 func (v *validator) FilterSlice(data interface{}) (result interface{}, err error) {
-	if v.processor.condition == nil {
+	if v.conditionValidator.GetCondition() == nil {
 		return false, errors.New("condition is nil")
 	}
-	con := validators.Condition{Condition: v.processor.condition}
-	return con.FilterSlice(data)
+	return v.conditionValidator.FilterSlice(data)
 }
