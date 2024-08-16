@@ -11,6 +11,7 @@ import (
 )
 
 type StructGen struct {
+	AttributeNames map[string]interface{}
 }
 
 var (
@@ -36,11 +37,12 @@ func (s *StructGen) GenerateCondition(query string) (structs.Condition, error) {
 	if len(tokenAttributes) == 0 {
 		return structs.Condition{Attribute: &structs.Attribute{}}, nil
 	}
-	_, condition := buildCondition(structs.Condition{}, tokenAttributes)
+	s.AttributeNames = make(map[string]interface{})
+	_, condition := buildCondition(structs.Condition{}, tokenAttributes, s.AttributeNames)
 	return condition, nil
 }
 
-func buildCondition(condition structs.Condition, attrs []*structs.TokenAttribute) (int, structs.Condition) {
+func buildCondition(condition structs.Condition, attrs []*structs.TokenAttribute, attributeNames map[string]interface{}) (int, structs.Condition) {
 	var (
 		conditionItem *structs.Condition
 		lastPos       int
@@ -60,7 +62,7 @@ func buildCondition(condition structs.Condition, attrs []*structs.TokenAttribute
 			newCondition := structs.Condition{
 				Operator: operator,
 			}
-			lastPos, resp := buildCondition(newCondition, attrs[i+1:])
+			lastPos, resp := buildCondition(newCondition, attrs[i+1:], attributeNames)
 			condition.Conditions = append(condition.Conditions, &resp)
 			i = i + lastPos + 1
 			continue
@@ -83,6 +85,7 @@ func buildCondition(condition structs.Condition, attrs []*structs.TokenAttribute
 				conditionItem.Attribute = &structs.Attribute{
 					Name: attr.Value,
 				}
+				attributeNames[attr.Value] = nil
 			} else {
 				conditionItem.Attribute.Value = attr.Value
 				if !attr.IsAlphanumeric {

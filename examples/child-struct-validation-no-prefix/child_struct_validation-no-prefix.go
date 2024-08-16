@@ -38,8 +38,8 @@ func strToStrPtr(s string) *string {
 }
 
 func main() {
-	query := `(sender_provider_id=bca && total_amount=50000) && 
-				(sender_provider_account_id=121 || sender_provider_account_id=1212121212)`
+	query := `(SenderProviderId=bca && TotalAmount=50000) && 
+				(SenderProviderAccountId=121 || SenderProviderAccountId=1212121212)`
 	val := "2022-11-03T16:50:16+07:00"
 	createdAt, _ := time.Parse(time.RFC3339, val)
 	transaction := TransactionUpdatedEvent{

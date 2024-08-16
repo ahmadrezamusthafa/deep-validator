@@ -330,7 +330,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation",
 			args: args{
-				query: `firstStruct.member_id=345`,
+				query: `MemberID=345`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -345,7 +345,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation",
 			args: args{
-				query: `firstStruct.division=engineering`,
+				query: `Division=engineering`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -360,7 +360,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - not equal",
 			args: args{
-				query: `firstStruct.member_id!=1232323`,
+				query: `MemberID!=1232323`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -375,7 +375,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - not equal",
 			args: args{
-				query: `firstStruct.division!=sales`,
+				query: `Division!=sales`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -390,7 +390,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - contains str",
 			args: args{
-				query: `firstStruct.division|=eng`,
+				query: `Division|=eng`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -405,7 +405,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - not contains str",
 			args: args{
-				query: `firstStruct.division|=eng`,
+				query: `Division|=eng`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -420,7 +420,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - contains regex",
 			args: args{
-				query: `firstStruct.division |~     "katak[\s][a-z]+[\s][0-9]+"`,
+				query: `Division |~     "katak[\s][a-z]+[\s][0-9]+"`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -435,7 +435,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - one struct validation - attribute brand not exist",
 			args: args{
-				query: `firstStruct.member_id=345 && firstStruct.brand=adidas`,
+				query: `MemberID=345 && Brand=adidas`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -450,7 +450,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - multi struct validation - all attributes exist",
 			args: args{
-				query: `thirdStruct.type=ABC && secondStruct.name=Test`,
+				query: `Type=ABC && Name=Test`,
 				data: []interface{}{
 					thirdData,
 					secondStruct{
@@ -464,7 +464,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - multi struct validation - attribute memberId in secondStruct not exist",
 			args: args{
-				query: `secondStruct.name=Test && secondStruct.memberId=1010101`,
+				query: `Name=Test && MemberID=1010101`,
 				data: []interface{}{
 					thirdData,
 					secondStruct{
@@ -478,7 +478,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - multi struct validation",
 			args: args{
-				query: `firstStruct.id=123 && secondStruct.name=Test`,
+				query: `ID=123 && Name=Test`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",
@@ -496,7 +496,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `firstStruct.id=123`,
+				query: `ID=123`,
 				data: firstStruct{
 					ID:       "123",
 					MemberID: "345",
@@ -509,7 +509,7 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 		{
 			name: "Normal case - multi struct validation",
 			args: args{
-				query: `(firstStruct.id=1234 || secondStruct=Test || thirdStruct.segment=new-member) && (firstStruct.member_id=345 && secondStruct.name=Test) && thirdStruct.type=ABC`,
+				query: `(ID=1234 || secondStruct=Test || Segment=new-member) && (MemberID=345 && Name=Test) && Type=ABC`,
 				data: []interface{}{
 					firstStruct{
 						ID:       "123",

@@ -23,6 +23,7 @@ type Validator interface {
 type processor struct{}
 
 type validator struct {
+	attributeNames     map[string]interface{}
 	conditionValidator validators.ConditionValidator
 }
 
@@ -30,8 +31,9 @@ func NewProcessor() Processor {
 	return &processor{}
 }
 
-func newValidator(conditionValidator validators.ConditionValidator) Validator {
+func newValidator(attributeNames map[string]interface{}, conditionValidator validators.ConditionValidator) Validator {
 	return &validator{
+		attributeNames:     attributeNames,
 		conditionValidator: conditionValidator,
 	}
 }
@@ -56,9 +58,9 @@ func (p *processor) RegisterCondition(astQuery string) Validator {
 	var gen structgen.StructGen
 	condition, err := gen.GenerateCondition(astQuery)
 	if err != nil {
-		return newValidator(nil)
+		return newValidator(nil, nil)
 	}
-	return newValidator(validators.NewConditionValidator(&condition))
+	return newValidator(gen.AttributeNames, validators.NewConditionValidator(&condition))
 }
 
 func (v *validator) SetRemovePrefix(value bool) Validator {
@@ -80,7 +82,7 @@ func (v *validator) ValidateMultipleStructs(data ...interface{}) (isValid bool, 
 	if v.conditionValidator.GetCondition() == nil {
 		return false, errors.New("condition is nil")
 	}
-	return v.conditionValidator.ValidateObjects(data...)
+	return v.conditionValidator.ValidateObjects(v.attributeNames, data...)
 }
 
 func (v *validator) ValidateCondition(inputCondition structs.Condition) (isValid bool, err error) {

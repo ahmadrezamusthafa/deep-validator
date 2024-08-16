@@ -13,7 +13,7 @@ import (
 type ConditionValidator interface {
 	ValidateCondition(condition structs.Condition) (isValid bool, err error)
 	Validate(data interface{}) (isValid bool, err error)
-	ValidateObjects(data ...interface{}) (isValid bool, err error)
+	ValidateObjects(attributeNames map[string]interface{}, data ...interface{}) (isValid bool, err error)
 	SetRemovePrefix(value bool) *Condition
 	FilterSlice(data interface{}) (result interface{}, err error)
 	GetCondition() *structs.Condition

@@ -29,14 +29,14 @@ func (c *Condition) Validate(data interface{}) (isValid bool, err error) {
 	}
 }
 
-func (c *Condition) ValidateObjects(data ...interface{}) (isValid bool, err error) {
+func (c *Condition) ValidateObjects(attributeNames map[string]interface{}, data ...interface{}) (isValid bool, err error) {
 	if data == nil {
 		return false, fmt.Errorf(errormessages.ErrorMessageInvalidData, "nil")
 	}
 	rType := reflect.TypeOf(data)
 	switch rType.Kind() {
 	case reflect.Slice:
-		dataMap := structsToMap(data, c.removePrefix)
+		dataMap := structsToMap(attributeNames, data)
 		return c.Validate(dataMap)
 	default:
 		return false, fmt.Errorf(errormessages.ErrorMessageInvalidType, "slice")
@@ -394,107 +394,43 @@ func validateNumeric(firstVal interface{}, operator string, secondVal interface{
 	}
 }
 
-func structsToMap(data interface{}, removePrefix ...bool) map[string]interface{} {
-	rValue := reflect.ValueOf(data)
-	prefix := ""
-	if rValue.Kind() == reflect.Slice {
-		prefix = reflect.TypeOf(data).Name()
-	}
-	if len(removePrefix) > 0 {
-		return processStructsToMap(removePrefix[0], prefix, data)
-	}
-	return processStructsToMap(false, prefix, data)
-}
-
-func processStructsToMap(removePrefix bool, prefix string, data interface{}) map[string]interface{} {
+func structsToMap(attributeNames map[string]interface{}, data interface{}) map[string]interface{} {
 	result := make(map[string]interface{})
 
-	rValue := reflect.ValueOf(data)
-	if rValue.Kind() == reflect.Ptr {
-		if rValue.IsNil() {
-			return result
-		}
-		rValue = rValue.Elem()
-	}
-
-	if rValue.Kind() == reflect.Slice {
-		for i := 0; i < rValue.Len(); i++ {
-			if !rValue.Index(i).CanInterface() {
-				continue
-			}
-			item := rValue.Index(i).Interface()
-			if item == nil {
-				return result
-			}
-			itemPrefix := reflect.TypeOf(item).Name()
-			nestedMap := processStructsToMap(removePrefix, itemPrefix, item)
+	switch val := data.(type) {
+	case []interface{}:
+		for _, item := range val {
+			nestedMap := structsToMap(attributeNames, item)
 			for k, v := range nestedMap {
 				result[k] = v
 			}
 		}
-		return result
-	}
-
-	if rValue.Kind() != reflect.Struct {
-		return result
-	}
-
-	rType := rValue.Type()
-	for i := 0; i < rValue.NumField(); i++ {
-		field := rValue.Field(i)
-		typeField := rType.Field(i)
-		key := typeField.Name
-
-		jsonTag := typeField.Tag.Get("json")
-		if jsonTag != "" && jsonTag != "-" {
-			key = strings.Split(jsonTag, ",")[0]
-		}
-
-		key = utils.ConvertToSnakeCase(key)
-		if prefix != "" && !removePrefix {
-			key = prefix + "." + key
-		}
-
-		fieldType := field.Type()
-		if fieldType == reflect.TypeOf(time.Time{}) || (fieldType.Kind() == reflect.Ptr && fieldType.Elem() == reflect.TypeOf(time.Time{})) {
-			if field.CanInterface() {
-				if field.Kind() == reflect.Ptr {
-					if !field.IsNil() && field.Elem().CanInterface() {
-						result[key] = field.Elem().Interface()
-					}
-				} else {
-					result[key] = field.Interface()
-				}
+	case interface{}:
+		rValue := reflect.ValueOf(data)
+		if rValue.Kind() == reflect.Ptr {
+			if rValue.IsNil() {
+				return result
 			}
-			continue
+			rValue = rValue.Elem()
 		}
+		for i := 0; i < rValue.NumField(); i++ {
+			field := rValue.Field(i)
+			typeField := rValue.Type().Field(i)
+			key := typeField.Name
 
-		if field.Kind() == reflect.Struct {
-			if field.CanInterface() {
-				nestedMap := processStructsToMap(removePrefix, key, field.Interface())
+			if field.Kind() == reflect.Struct {
+				nestedMap := structsToMap(attributeNames, field.Interface())
 				for k, v := range nestedMap {
 					result[k] = v
 				}
 			}
-		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
-			if field.Elem().Kind() == reflect.Struct {
-				if field.Elem().CanInterface() {
-					nestedMap := processStructsToMap(removePrefix, key, field.Elem().Interface())
-					for k, v := range nestedMap {
-						result[k] = v
-					}
-				}
-			} else {
-				if field.CanInterface() {
-					result[key] = field.Interface()
-				}
+			if _, ok := attributeNames[key]; !ok {
+				continue
 			}
-		} else {
 			if field.CanInterface() {
 				result[key] = field.Interface()
 			}
 		}
 	}
-
 	return result
 }

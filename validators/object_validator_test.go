@@ -25,10 +25,10 @@ func TestStructsToMap(t *testing.T) {
 	}
 
 	tests := []struct {
-		name         string
-		input        interface{}
-		removePrefix bool
-		expected     map[string]interface{}
+		name           string
+		attributeNames map[string]interface{}
+		input          interface{}
+		expected       map[string]interface{}
 	}{
 		{
 			name: "Single struct",
@@ -38,10 +38,13 @@ func TestStructsToMap(t *testing.T) {
 					PartnerId: "bca",
 				},
 			},
-			removePrefix: false,
+			attributeNames: map[string]interface{}{
+				"EventSource": nil,
+				"PartnerId":   nil,
+			},
 			expected: map[string]interface{}{
-				"event_source":       "source",
-				"payload.partner_id": "bca",
+				"EventSource": "source",
+				"PartnerId":   "bca",
 			},
 		},
 		{
@@ -52,10 +55,13 @@ func TestStructsToMap(t *testing.T) {
 					PartnerId: "bca",
 				},
 			},
-			removePrefix: true,
+			attributeNames: map[string]interface{}{
+				"EventSource": nil,
+				"PartnerId":   nil,
+			},
 			expected: map[string]interface{}{
-				"event_source": "source",
-				"partner_id":   "bca",
+				"EventSource": "source",
+				"PartnerId":   "bca",
 			},
 		},
 		{
@@ -74,12 +80,15 @@ func TestStructsToMap(t *testing.T) {
 					},
 				},
 			},
-			removePrefix: false,
+			attributeNames: map[string]interface{}{
+				"EventSource":   nil,
+				"PartnerId":     nil,
+				"TransactionId": nil,
+			},
 			expected: map[string]interface{}{
-				"PartnerStatementUpdatedEvent.event_source":       "source1",
-				"TransactionUpdatedEvent.event_source":            "source2",
-				"PartnerStatementUpdatedEvent.payload.partner_id": "bca1",
-				"TransactionUpdatedEvent.payload.transaction_id":  "123455",
+				"EventSource":   "source2",
+				"PartnerId":     "bca1",
+				"TransactionId": "123455",
 			},
 		},
 		{
@@ -98,11 +107,15 @@ func TestStructsToMap(t *testing.T) {
 					},
 				},
 			},
-			removePrefix: true,
+			attributeNames: map[string]interface{}{
+				"EventSource":   nil,
+				"PartnerId":     nil,
+				"TransactionId": nil,
+			},
 			expected: map[string]interface{}{
-				"event_source":   "source2",
-				"partner_id":     "bca1",
-				"transaction_id": "123455",
+				"EventSource":   "source2",
+				"PartnerId":     "bca1",
+				"TransactionId": "123455",
 			},
 		},
 		{
@@ -113,10 +126,13 @@ func TestStructsToMap(t *testing.T) {
 					TransactionId: "txn123",
 				},
 			},
-			removePrefix: false,
+			attributeNames: map[string]interface{}{
+				"EventSource":   nil,
+				"TransactionId": nil,
+			},
 			expected: map[string]interface{}{
-				"event_source":           "source",
-				"payload.transaction_id": "txn123",
+				"EventSource":   "source",
+				"TransactionId": "txn123",
 			},
 		},
 		{
@@ -127,29 +143,30 @@ func TestStructsToMap(t *testing.T) {
 					PartnerId: "",
 				},
 			},
-			removePrefix: false,
+			attributeNames: map[string]interface{}{
+				"EventSource": nil,
+				"PartnerId":   nil,
+			},
 			expected: map[string]interface{}{
-				"event_source":       "",
-				"payload.partner_id": "",
+				"EventSource": "",
+				"PartnerId":   "",
 			},
 		},
 		{
-			name:         "Empty struct",
-			input:        struct{}{},
-			removePrefix: false,
-			expected:     map[string]interface{}{},
+			name:     "Empty struct",
+			input:    struct{}{},
+			expected: map[string]interface{}{},
 		},
 		{
-			name:         "Nil input",
-			input:        nil,
-			removePrefix: false,
-			expected:     map[string]interface{}{},
+			name:     "Nil input",
+			input:    nil,
+			expected: map[string]interface{}{},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := structsToMap(tt.input, tt.removePrefix)
+			result := structsToMap(tt.attributeNames, tt.input)
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("processStructsToMap() = %v, want %v", result, tt.expected)
 			}
