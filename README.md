@@ -19,6 +19,21 @@ go get github.com/ahmadrezamusthafa/deep-validators
 
 ## Usage
 
+### Supported Operators
+
+The `deep-validator` library supports a variety of operators for use in query strings. Below is a table of the supported operators:
+
+| Operator                    | Symbol | Description                                                  |
+|-----------------------------|--------|--------------------------------------------------------------|
+| **Equal**                   | `=`    | Checks if a field is equal to a specified value.             |
+| **Not Equal**               | `!=`   | Checks if a field is not equal to a specified value.         |
+| **Less Than**               | `<`    | Checks if a field is less than a specified value.            |
+| **Less Than or Equal**      | `<=`   | Checks if a field is less than or equal to a specified value. |
+| **Greater Than**            | `>`    | Checks if a field is greater than a specified value.         |
+| **Greater Than or Equal**   | `>=`   | Checks if a field is greater than or equal to a specified value.|
+| **Contains**                | `\|=`  | Checks if a field contains a specified substring.              |
+| **Contains Regex Match**    | `\|~`  | Checks if a field matches a specified regex pattern.           |
+
 ### Basic Validation
 
 To validate a single struct:
