@@ -17,6 +17,7 @@ type Validator interface {
 	ValidateMultipleStructs(data ...interface{}) (isValid bool, err error)
 	ValidateCondition(inputCondition structs.Condition) (isValid bool, err error)
 	FilterSlice(data interface{}) (result interface{}, err error)
+	GetCondition() *structs.Condition
 }
 
 type processor struct{}
@@ -94,4 +95,11 @@ func (v *validator) FilterSlice(data interface{}) (result interface{}, err error
 		return false, errors.New("condition is nil")
 	}
 	return v.conditionValidator.FilterSlice(data)
+}
+
+func (v *validator) GetCondition() *structs.Condition {
+	if v.conditionValidator.GetCondition() == nil {
+		return nil
+	}
+	return v.conditionValidator.GetCondition()
 }

@@ -40,8 +40,8 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: false,
 			expected: map[string]interface{}{
-				"EventSource":       "source",
-				"Payload.PartnerId": "bca",
+				"event_source":       "source",
+				"payload.partner_id": "bca",
 			},
 		},
 		{
@@ -54,8 +54,8 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: true,
 			expected: map[string]interface{}{
-				"EventSource": "source",
-				"PartnerId":   "bca",
+				"event_source": "source",
+				"partner_id":   "bca",
 			},
 		},
 		{
@@ -76,10 +76,10 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: false,
 			expected: map[string]interface{}{
-				"PartnerStatementUpdatedEvent.EventSource":       "source1",
-				"TransactionUpdatedEvent.EventSource":            "source2",
-				"PartnerStatementUpdatedEvent.Payload.PartnerId": "bca1",
-				"TransactionUpdatedEvent.Payload.TransactionId":  "123455",
+				"PartnerStatementUpdatedEvent.event_source":       "source1",
+				"TransactionUpdatedEvent.event_source":            "source2",
+				"PartnerStatementUpdatedEvent.payload.partner_id": "bca1",
+				"TransactionUpdatedEvent.payload.transaction_id":  "123455",
 			},
 		},
 		{
@@ -100,9 +100,9 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: true,
 			expected: map[string]interface{}{
-				"EventSource":   "source2",
-				"PartnerId":     "bca1",
-				"TransactionId": "123455",
+				"event_source":   "source2",
+				"partner_id":     "bca1",
+				"transaction_id": "123455",
 			},
 		},
 		{
@@ -115,8 +115,8 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: false,
 			expected: map[string]interface{}{
-				"EventSource":           "source",
-				"Payload.TransactionId": "txn123",
+				"event_source":           "source",
+				"payload.transaction_id": "txn123",
 			},
 		},
 		{
@@ -129,8 +129,8 @@ func TestStructsToMap(t *testing.T) {
 			},
 			removePrefix: false,
 			expected: map[string]interface{}{
-				"EventSource":       "",
-				"Payload.PartnerId": "",
+				"event_source":       "",
+				"payload.partner_id": "",
 			},
 		},
 		{

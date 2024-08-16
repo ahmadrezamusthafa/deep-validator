@@ -92,3 +92,31 @@ func InterfaceToFloat32(input interface{}) float32 {
 	}
 	return 0
 }
+
+func InterfacePtrToString(input interface{}) string {
+	if val, ok := input.(*string); ok {
+		return *val
+	}
+	return ""
+}
+
+func ConvertToSnakeCase(s string) string {
+	if len(s) == 0 {
+		return s
+	}
+	var result []byte
+	n := len(s)
+	for i := 0; i < n; i++ {
+		ch := s[i]
+		if ch >= 'A' && ch <= 'Z' {
+			if i > 0 && !(s[i-1] >= 'A' && s[i-1] <= 'Z') {
+				result = append(result, '_')
+			}
+			result = append(result, ch+'a'-'A')
+		} else {
+			result = append(result, ch)
+		}
+	}
+
+	return string(result)
+}

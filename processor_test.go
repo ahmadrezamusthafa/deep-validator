@@ -219,7 +219,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation",
 			args: args{
-				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance)`,
+				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance)`,
 				object: struct {
 					ID       int
 					MemberID int
@@ -236,7 +236,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation - Brand attribute is not exist",
 			args: args{
-				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance) && Brand=Adidas`,
+				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance) && Brand=Adidas`,
 				object: struct {
 					ID       int
 					MemberID int
@@ -253,7 +253,7 @@ func TestCondition_ValidateStruct(t *testing.T) {
 		{
 			name: "Normal case - struct validation - skip not exist attribute because using OR condition",
 			args: args{
-				query: `ID=1 &&  MemberID=2  &&   (Division=engineering || Division=finance) && (Category=Bawahan || ID=1 || Brand=nike)`,
+				query: `id=1 &&  member_id=2  &&   (division=engineering || division=finance) && (category=Bawahan || id=1 || brand=nike)`,
 				object: struct {
 					ID       int
 					MemberID int

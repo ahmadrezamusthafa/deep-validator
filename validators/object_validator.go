@@ -157,6 +157,7 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 		if ok && jsonTag != "" {
 			tag = jsonTag
 		}
+		tag = utils.ConvertToSnakeCase(tag)
 		tag = prefix + tag
 
 		if tag == c.Attribute.Name {
@@ -195,6 +196,10 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 			case bool:
 				validationType = valuetypes.Alphanumeric
 				conditionValue = utils.StringToBool(c.Attribute.Value)
+			case *string:
+				validationType = valuetypes.Alphanumeric
+				value = utils.InterfacePtrToString(value)
+				conditionValue = c.Attribute.Value
 			default:
 				validationType = valuetypes.Alphanumeric
 				conditionValue = c.Attribute.Value
@@ -278,6 +283,10 @@ func (c *Condition) validateMap(key string, value interface{}) (isValid bool, er
 		case bool:
 			validationType = valuetypes.Alphanumeric
 			conditionValue = utils.StringToBool(c.Attribute.Value)
+		case *string:
+			validationType = valuetypes.Alphanumeric
+			value = utils.InterfacePtrToString(value)
+			conditionValue = c.Attribute.Value
 		default:
 			validationType = valuetypes.Alphanumeric
 			conditionValue = c.Attribute.Value
@@ -442,6 +451,7 @@ func processStructsToMap(removePrefix bool, prefix string, data interface{}) map
 			key = strings.Split(jsonTag, ",")[0]
 		}
 
+		key = utils.ConvertToSnakeCase(key)
 		if prefix != "" && !removePrefix {
 			key = prefix + "." + key
 		}

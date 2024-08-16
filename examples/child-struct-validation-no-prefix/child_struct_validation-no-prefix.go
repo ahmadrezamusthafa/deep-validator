@@ -11,7 +11,7 @@ type TransactionUpdatedEventPayload struct {
 	TransactionType              string                 `json:"transactionType"`
 	TotalAmount                  float64                `json:"totalAmount"`
 	SenderType                   string                 `json:"senderType"`
-	SenderProviderId             string                 `json:"senderProviderId"`
+	SenderProviderId             *string                `json:"senderProviderId"`
 	SenderProviderAccountId      string                 `json:"senderProviderAccountId"`
 	TransactionReference         string                 `json:"transactionReference"`
 	Status                       string                 `json:"status"`
@@ -33,9 +33,13 @@ type TransactionUpdatedEvent struct {
 	Payload              TransactionUpdatedEventPayload `json:"payload"`
 }
 
+func strToStrPtr(s string) *string {
+	return &s
+}
+
 func main() {
-	query := `(senderProviderId=bca && totalAmount=50000) && 
-				(senderProviderAccountId=121 || senderProviderAccountId=1212121212)`
+	query := `(sender_provider_id=bca && total_amount=50000) && 
+				(sender_provider_account_id=121 || sender_provider_account_id=1212121212)`
 	val := "2022-11-03T16:50:16+07:00"
 	createdAt, _ := time.Parse(time.RFC3339, val)
 	transaction := TransactionUpdatedEvent{
@@ -48,7 +52,7 @@ func main() {
 			TransactionType:              "",
 			TotalAmount:                  50000,
 			SenderType:                   "",
-			SenderProviderId:             "bca",
+			SenderProviderId:             strToStrPtr("bca"),
 			SenderProviderAccountId:      "1212121212",
 			TransactionReference:         "",
 			Status:                       "",
