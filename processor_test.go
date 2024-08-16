@@ -343,6 +343,51 @@ func TestCondition_ValidateMultipleStructs(t *testing.T) {
 			wantErr:     false,
 		},
 		{
+			name: "Normal case - one struct validation - contains str",
+			args: args{
+				query: `firstStruct.division|=eng`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "engineering",
+					},
+				},
+			},
+			wantIsValid: true,
+			wantErr:     false,
+		},
+		{
+			name: "Normal case - one struct validation - not contains str",
+			args: args{
+				query: `firstStruct.division|=eng`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "pasukan katak bersaudara 7896",
+					},
+				},
+			},
+			wantIsValid: false,
+			wantErr:     false,
+		},
+		{
+			name: "Normal case - one struct validation - contains regex",
+			args: args{
+				query: `firstStruct.division |~     "katak[\s][a-z]+[\s][0-9]+"`,
+				data: []interface{}{
+					firstStruct{
+						ID:       "123",
+						MemberID: "345",
+						Division: "pasukan katak bersaudara 7896",
+					},
+				},
+			},
+			wantIsValid: true,
+			wantErr:     false,
+		},
+		{
 			name: "Normal case - one struct validation - attribute brand not exist",
 			args: args{
 				query: `firstStruct.member_id=345 && firstStruct.brand=adidas`,

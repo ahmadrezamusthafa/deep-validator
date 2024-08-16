@@ -10,6 +10,7 @@ import (
 	"github.com/ahmadrezamusthafa/deep-validator/consts/operators"
 	"github.com/ahmadrezamusthafa/deep-validator/enums/value-types"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -205,6 +206,10 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 			switch operator {
 			case operators.OperatorEqual:
 				isValid = value == conditionValue
+			case operators.OperatorContains:
+				isValid = validateAlphanumericContains(value, conditionValue)
+			case operators.OperatorContainsRegexMatch:
+				isValid = validateAlphanumericRegexContains(value, conditionValue)
 			default:
 				switch validationType {
 				case valuetypes.Date:
@@ -282,6 +287,10 @@ func (c *Condition) validateMap(key string, value interface{}) (isValid bool, er
 		switch operator {
 		case operators.OperatorEqual:
 			isValid = value == conditionValue
+		case operators.OperatorContains:
+			isValid = validateAlphanumericContains(value, conditionValue)
+		case operators.OperatorContainsRegexMatch:
+			isValid = validateAlphanumericRegexContains(value, conditionValue)
 		default:
 			switch validationType {
 			case valuetypes.Date:
@@ -292,6 +301,33 @@ func (c *Condition) validateMap(key string, value interface{}) (isValid bool, er
 		}
 	}
 	return
+}
+
+func validateAlphanumericContains(str interface{}, subStr interface{}) bool {
+	firstStr, ok := str.(string)
+	if !ok {
+		return false
+	}
+	secondStr, ok := subStr.(string)
+	if !ok {
+		return false
+	}
+
+	return strings.Contains(firstStr, secondStr)
+}
+
+func validateAlphanumericRegexContains(str interface{}, pattern interface{}) bool {
+	input, ok := str.(string)
+	if !ok {
+		return false
+	}
+	patternStr, ok := pattern.(string)
+	if !ok {
+		return false
+	}
+
+	match, _ := regexp.MatchString(patternStr, input)
+	return match
 }
 
 func validateTime(firstVal interface{}, operator string, secondVal interface{}) bool {
