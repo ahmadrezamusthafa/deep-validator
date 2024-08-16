@@ -456,6 +456,20 @@ func processStructsToMap(removePrefix bool, prefix string, data interface{}) map
 			key = prefix + "." + key
 		}
 
+		fieldType := field.Type()
+		if fieldType == reflect.TypeOf(time.Time{}) || (fieldType.Kind() == reflect.Ptr && fieldType.Elem() == reflect.TypeOf(time.Time{})) {
+			if field.CanInterface() {
+				if field.Kind() == reflect.Ptr {
+					if !field.IsNil() && field.Elem().CanInterface() {
+						result[key] = field.Elem().Interface()
+					}
+				} else {
+					result[key] = field.Interface()
+				}
+			}
+			continue
+		}
+
 		if field.Kind() == reflect.Struct {
 			if field.CanInterface() {
 				nestedMap := processStructsToMap(removePrefix, key, field.Interface())
