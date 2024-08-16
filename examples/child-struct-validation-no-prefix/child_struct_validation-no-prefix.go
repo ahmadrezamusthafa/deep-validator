@@ -36,6 +36,8 @@ type TransactionUpdatedEvent struct {
 func main() {
 	query := `(senderProviderId=bca && totalAmount=50000) && 
 				(senderProviderAccountId=121 || senderProviderAccountId=1212121212)`
+	val := "2022-11-03T16:50:16+07:00"
+	createdAt, _ := time.Parse(time.RFC3339, val)
 	transaction := TransactionUpdatedEvent{
 		EventSource:          "",
 		EventId:              "",
@@ -50,7 +52,7 @@ func main() {
 			SenderProviderAccountId:      "1212121212",
 			TransactionReference:         "",
 			Status:                       "",
-			CreatedAt:                    nil,
+			CreatedAt:                    &createdAt,
 			ConfirmedAt:                  nil,
 			CompletedAt:                  nil,
 			ExtraInfo:                    nil,

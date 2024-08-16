@@ -411,6 +411,9 @@ func processStructsToMap(removePrefix bool, prefix string, data interface{}) map
 
 	if rValue.Kind() == reflect.Slice {
 		for i := 0; i < rValue.Len(); i++ {
+			if !rValue.Index(i).CanInterface() {
+				continue
+			}
 			item := rValue.Index(i).Interface()
 			if item == nil {
 				return result
@@ -444,18 +447,24 @@ func processStructsToMap(removePrefix bool, prefix string, data interface{}) map
 		}
 
 		if field.Kind() == reflect.Struct {
-			nestedMap := processStructsToMap(removePrefix, key, field.Interface())
-			for k, v := range nestedMap {
-				result[k] = v
-			}
-		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
-			if field.Elem().Kind() == reflect.Struct {
-				nestedMap := processStructsToMap(removePrefix, key, field.Elem().Interface())
+			if field.CanInterface() {
+				nestedMap := processStructsToMap(removePrefix, key, field.Interface())
 				for k, v := range nestedMap {
 					result[k] = v
 				}
+			}
+		} else if field.Kind() == reflect.Ptr && !field.IsNil() {
+			if field.Elem().Kind() == reflect.Struct {
+				if field.Elem().CanInterface() {
+					nestedMap := processStructsToMap(removePrefix, key, field.Elem().Interface())
+					for k, v := range nestedMap {
+						result[k] = v
+					}
+				}
 			} else {
-				result[key] = field.Interface()
+				if field.CanInterface() {
+					result[key] = field.Interface()
+				}
 			}
 		} else {
 			if field.CanInterface() {
