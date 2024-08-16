@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"github.com/ahmadrezamusthafa/deep-validator/consts/datetime-formats"
 	"strconv"
 	"time"
 )
@@ -26,7 +25,7 @@ func StringToFloat64(value string) float64 {
 
 func StringToTime(value string) time.Time {
 	var timeValue time.Time
-	timeValue, err := time.Parse(datetime_formats.DateTimeFormat, value)
+	timeValue, err := time.Parse(time.RFC3339, value)
 	if err != nil {
 		return time.Time{}
 	}

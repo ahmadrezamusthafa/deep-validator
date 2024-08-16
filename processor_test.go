@@ -995,7 +995,7 @@ func TestCondition_FilterSlice(t *testing.T) {
 		{
 			name: "Normal case",
 			args: args{
-				query:   `join_date>"2015-01-01 00:00:00" && join_date<="2016-01-01 00:00:00" && score>80 && point<4000 && wallet>90 && money>=1500000`,
+				query:   `join_date>"2015-01-01T00:00:00+07:00" && join_date<="2016-01-01T00:00:00+07:00" && score>80 && point<4000 && wallet>90 && money>=1500000`,
 				objects: testData,
 			},
 			wantResults: []Account{

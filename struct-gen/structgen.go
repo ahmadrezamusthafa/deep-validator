@@ -3,7 +3,6 @@ package structgen
 import (
 	"bytes"
 	bytescodes "github.com/ahmadrezamusthafa/deep-validator/consts/bytes-codes"
-	datetimeformats "github.com/ahmadrezamusthafa/deep-validator/consts/datetime-formats"
 	"github.com/ahmadrezamusthafa/deep-validator/consts/logical-operators"
 	"github.com/ahmadrezamusthafa/deep-validator/consts/operators"
 	"github.com/ahmadrezamusthafa/deep-validator/enums/value-types"
@@ -211,7 +210,7 @@ func getValueType(value string) valuetypes.ValueType {
 		indexVal++
 	}
 	if varType == valuetypes.Alphanumeric {
-		if _, err := time.Parse(datetimeformats.DateTimeFormat, value); err == nil {
+		if _, err := time.Parse(time.RFC3339, value); err == nil {
 			varType = valuetypes.Date
 		}
 	}

@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ahmadrezamusthafa/deep-validator/common/utils"
-	datetimeformats "github.com/ahmadrezamusthafa/deep-validator/consts/datetime-formats"
 	errormessages "github.com/ahmadrezamusthafa/deep-validator/consts/error-messages"
 	"github.com/ahmadrezamusthafa/deep-validator/consts/logical-operators"
 	"github.com/ahmadrezamusthafa/deep-validator/consts/operators"
@@ -185,14 +184,14 @@ func (c *Condition) validateStructValue(prefix string, data interface{}) (isVali
 				conditionValue, err = strconv.ParseInt(c.Attribute.Value, 10, 64)
 			case time.Time:
 				validationType = valuetypes.Date
-				conditionValue, err = time.Parse(datetimeformats.DateTimeFormat, c.Attribute.Value)
+				conditionValue, err = time.Parse(time.RFC3339, c.Attribute.Value)
 			case *time.Time:
 				validationType = valuetypes.Date
 				res, ok := value.(*time.Time)
 				if ok {
 					value = *res
 				}
-				conditionValue, err = time.Parse(datetimeformats.DateTimeFormat, c.Attribute.Value)
+				conditionValue, err = time.Parse(time.RFC3339, c.Attribute.Value)
 			case bool:
 				validationType = valuetypes.Alphanumeric
 				conditionValue = utils.StringToBool(c.Attribute.Value)
@@ -272,14 +271,14 @@ func (c *Condition) validateMap(key string, value interface{}) (isValid bool, er
 			conditionValue, err = strconv.ParseInt(c.Attribute.Value, 10, 64)
 		case time.Time:
 			validationType = valuetypes.Date
-			conditionValue, err = time.Parse(datetimeformats.DateTimeFormat, c.Attribute.Value)
+			conditionValue, err = time.Parse(time.RFC3339, c.Attribute.Value)
 		case *time.Time:
 			validationType = valuetypes.Date
 			res, ok := value.(*time.Time)
 			if ok {
 				value = *res
 			}
-			conditionValue, err = time.Parse(datetimeformats.DateTimeFormat, c.Attribute.Value)
+			conditionValue, err = time.Parse(time.RFC3339, c.Attribute.Value)
 		case bool:
 			validationType = valuetypes.Alphanumeric
 			conditionValue = utils.StringToBool(c.Attribute.Value)
