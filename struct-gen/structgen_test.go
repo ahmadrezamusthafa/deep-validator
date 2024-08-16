@@ -65,6 +65,39 @@ func TestGenerateConditionQueryStructure(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "Normal case - contains name or regex",
+			args: args{
+				query: `
+                      id = 1 
+                      && member_id = 2 
+                      && (
+                        name |= "reza"
+                        || name |~ "bud[a-z]+[\s]ahmad"
+                      )
+`,
+			},
+			want:    `{"conditions":[{"attribute":{"name":"id","operator":"=","value":"1","type":"numeric"}},{"operator":"AND","attribute":{"name":"member_id","operator":"=","value":"2","type":"numeric"}},{"operator":"AND","conditions":[{"attribute":{"name":"name","operator":"|=","value":"reza"}},{"operator":"OR","attribute":{"name":"name","operator":"|~","value":"bud[a-z]+[\\s]ahmad"}}]}]}`,
+			wantErr: false,
+		},
+		{
+			name: "Normal case - contains name or regex",
+			args: args{
+				query: `
+                      id = 1 
+                      && member_id = 2 
+                      && (
+                        name |= "reza"
+                        || (
+								name |~ "bud[a-z]+[\s]ahmad" 
+                                || name |~ "mus[a-z]+[\s]ghozali"
+                            )
+                      )
+`,
+			},
+			want:    `{"conditions":[{"attribute":{"name":"id","operator":"=","value":"1","type":"numeric"}},{"operator":"AND","attribute":{"name":"member_id","operator":"=","value":"2","type":"numeric"}},{"operator":"AND","conditions":[{"attribute":{"name":"name","operator":"|=","value":"reza"}},{"operator":"OR","conditions":[{"attribute":{"name":"name","operator":"|~","value":"bud[a-z]+[\\s]ahmad"}},{"operator":"OR","attribute":{"name":"name","operator":"|~","value":"mus[a-z]+[\\s]ghozali"}}]}]}]}`,
+			wantErr: false,
+		},
+		{
 			name: "Normal case",
 			args: args{
 				query: `id=1 &&  member_id=2   &&   (division=engineering || division=finance)`,

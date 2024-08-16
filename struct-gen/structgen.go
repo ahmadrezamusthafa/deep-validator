@@ -155,6 +155,8 @@ func getTokenAttributes(query string) []*structs.TokenAttribute {
 			if !isOpenQuote {
 				isAlphanumeric = true
 			}
+		case '\t':
+			// ignore
 		default:
 			if buffer.Len() > 0 {
 				bufByte := buffer.Bytes()[0]
