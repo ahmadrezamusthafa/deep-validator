@@ -36,7 +36,7 @@ func (c *Condition) ValidateObjects(attributeNames map[string]interface{}, data 
 	rType := reflect.TypeOf(data)
 	switch rType.Kind() {
 	case reflect.Slice:
-		dataMap := structsToMap(attributeNames, data)
+		dataMap := utils.StructsToMap(attributeNames, data)
 		return c.Validate(dataMap)
 	default:
 		return false, fmt.Errorf(errormessages.ErrorMessageInvalidType, "slice")
@@ -387,45 +387,4 @@ func validateNumeric(firstVal interface{}, operator string, secondVal interface{
 	default:
 		return firstFloat <= secondFloat
 	}
-}
-
-func structsToMap(attributeNames map[string]interface{}, data interface{}) map[string]interface{} {
-	result := make(map[string]interface{})
-
-	switch val := data.(type) {
-	case []interface{}:
-		for _, item := range val {
-			nestedMap := structsToMap(attributeNames, item)
-			for k, v := range nestedMap {
-				result[k] = v
-			}
-		}
-	case interface{}:
-		rValue := reflect.ValueOf(data)
-		if rValue.Kind() == reflect.Ptr {
-			if rValue.IsNil() {
-				return result
-			}
-			rValue = rValue.Elem()
-		}
-		for i := 0; i < rValue.NumField(); i++ {
-			field := rValue.Field(i)
-			typeField := rValue.Type().Field(i)
-			key := typeField.Name
-
-			if field.Kind() == reflect.Struct {
-				nestedMap := structsToMap(attributeNames, field.Interface())
-				for k, v := range nestedMap {
-					result[k] = v
-				}
-			}
-			if _, ok := attributeNames[key]; !ok {
-				continue
-			}
-			if field.CanInterface() {
-				result[key] = field.Interface()
-			}
-		}
-	}
-	return result
 }

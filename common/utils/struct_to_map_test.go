@@ -1,4 +1,4 @@
-package validators
+package utils
 
 import (
 	"reflect"
@@ -166,7 +166,7 @@ func TestStructsToMap(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := structsToMap(tt.attributeNames, tt.input)
+			result := StructsToMap(tt.attributeNames, tt.input)
 			if !reflect.DeepEqual(result, tt.expected) {
 				t.Errorf("processStructsToMap() = %v, want %v", result, tt.expected)
 			}

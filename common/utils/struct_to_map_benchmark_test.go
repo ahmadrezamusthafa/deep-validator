@@ -1,4 +1,4 @@
-package validators
+package utils
 
 import (
 	"encoding/json"
@@ -73,6 +73,6 @@ func BenchmarkStructsToMap(b *testing.B) {
 	}
 
 	for n := 0; n < b.N; n++ {
-		structsToMap(attributeNames, trx)
+		StructsToMap(attributeNames, trx)
 	}
 }
